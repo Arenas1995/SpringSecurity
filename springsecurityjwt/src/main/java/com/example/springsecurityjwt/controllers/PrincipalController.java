@@ -7,6 +7,8 @@ import com.example.springsecurityjwt.repositories.UserRepository;
 import com.example.springsecurityjwt.requests.UserRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,8 +20,11 @@ public class PrincipalController {
 
     private final UserRepository userRepository;
 
-    public PrincipalController(UserRepository userRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public PrincipalController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/hello")
@@ -28,11 +33,13 @@ public class PrincipalController {
     }
 
     @GetMapping("/hello-secured")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public String helloSecured() {
         return "Hello Secured";
     }
 
     @PostMapping("/user")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> saveUser(@Valid @RequestBody UserRequest userRequest) {
 
         Set<RoleEntity> roles = userRequest.getRoles().stream()
@@ -43,7 +50,7 @@ public class PrincipalController {
         UserEntity userEntity = UserEntity.builder()
                 .email(userRequest.getEmail())
                 .username(userRequest.getUsername())
-                .password(userRequest.getPassword())
+                .password(passwordEncoder.encode(userRequest.getPassword()))
                 .roles(roles).build();
 
         userRepository.save(userEntity);
@@ -52,6 +59,7 @@ public class PrincipalController {
     }
 
     @DeleteMapping("/delete-user")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@RequestParam String id) {
 
         userRepository.deleteById(Long.parseLong(id));
