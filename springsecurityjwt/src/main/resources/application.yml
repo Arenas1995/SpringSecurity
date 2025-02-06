@@ -17,6 +17,7 @@ spring:
 
 jwt:
   secret-key: 0jIdNGEMGqylM00KO+2HPayDi796nINoRNTi2vE+ptWz3xIerEJdmjttGh6eOpvB
+  user-generator: CotrafaSecurity
   time-expiration: 120000
 
 logging:

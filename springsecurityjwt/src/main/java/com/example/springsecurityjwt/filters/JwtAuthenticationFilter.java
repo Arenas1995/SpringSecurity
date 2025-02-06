@@ -1,5 +1,6 @@
 package com.example.springsecurityjwt.filters;
 
+import com.example.springsecurityjwt.jwt.JwtUtilities;
 import com.example.springsecurityjwt.jwt.JwtUtils;
 import com.example.springsecurityjwt.models.UserEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,15 +25,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final JwtUtils jwtUtils;
 
-    public JwtAuthenticationFilter(JwtUtils jwtUtils) {
+    private final JwtUtilities jwtUtilities;
+
+    public JwtAuthenticationFilter(JwtUtils jwtUtils, JwtUtilities jwtUtilities) {
         this.jwtUtils = jwtUtils;
+        this.jwtUtilities = jwtUtilities;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
 
-        UserEntity userEntity = null;
+        UserEntity userEntity;
         String userName;
         String password;
 
@@ -55,9 +60,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException {
 
         User user = (User) authResult.getPrincipal();
-        String token = jwtUtils.generateAccesToken(user.getUsername());
+        //String token = jwtUtils.generateAccesToken(user.getUsername());
+        String token = jwtUtilities.generateAccesToken(authResult);
 
-        response.addHeader("Authorization", token);
+        response.addHeader(HttpHeaders.AUTHORIZATION, token);
 
         Map<String, Object> httpResponse = new HashMap<>();
         httpResponse.put("token", token);

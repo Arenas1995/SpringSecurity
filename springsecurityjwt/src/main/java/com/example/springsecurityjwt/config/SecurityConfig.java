@@ -2,7 +2,9 @@ package com.example.springsecurityjwt.config;
 
 import com.example.springsecurityjwt.filters.JwtAuthenticationFilter;
 import com.example.springsecurityjwt.filters.JwtAuthorizationFilter;
+import com.example.springsecurityjwt.jwt.JwtUtilities;
 import com.example.springsecurityjwt.jwt.JwtUtils;
+import com.example.springsecurityjwt.services.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,10 +29,13 @@ public class SecurityConfig {
 
     private final JwtUtils jwtUtils;
 
+    private final JwtUtilities jwtUtilities;
+
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
-    public SecurityConfig(JwtUtils jwtUtils, JwtAuthorizationFilter jwtAuthorizationFilter) {
+    public SecurityConfig(JwtUtils jwtUtils, JwtUtilities jwtUtilities, JwtAuthorizationFilter jwtAuthorizationFilter) {
         this.jwtUtils = jwtUtils;
+        this.jwtUtilities = jwtUtilities;
         this.jwtAuthorizationFilter = jwtAuthorizationFilter;
     }
 
@@ -38,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager)
             throws Exception {
 
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils, jwtUtilities);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
 
         http
