@@ -43,19 +43,20 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager)
             throws Exception {
 
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils, jwtUtilities);
-        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
+        /*JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils, jwtUtilities);
+        jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);*/
 
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/hello").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         //.requestMatchers(HttpMethod.POST,"/user").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf((AbstractHttpConfigurer::disable))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilter(jwtAuthenticationFilter)
+                //.addFilter(jwtAuthenticationFilter)
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
