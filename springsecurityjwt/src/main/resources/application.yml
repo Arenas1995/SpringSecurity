@@ -13,7 +13,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 
 jwt:
   secret-key: 0jIdNGEMGqylM00KO+2HPayDi796nINoRNTi2vE+ptWz3xIerEJdmjttGh6eOpvB

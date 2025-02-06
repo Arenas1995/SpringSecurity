@@ -1,6 +1,8 @@
 package com.example.springsecurityjwt.controllers;
 
+import com.example.springsecurityjwt.enums.PermissionsEnum;
 import com.example.springsecurityjwt.enums.RoleEnum;
+import com.example.springsecurityjwt.models.PermissionEntity;
 import com.example.springsecurityjwt.models.RoleEntity;
 import com.example.springsecurityjwt.models.UserEntity;
 import com.example.springsecurityjwt.repositories.UserRepository;
@@ -28,12 +30,13 @@ public class PrincipalController {
     }
 
     @GetMapping("/hello")
+    @PreAuthorize("hasAuthority('READ')")
     public String hello() {
         return "Hello not secured";
     }
 
     @GetMapping("/hello-secured")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @PreAuthorize("hasAuthority('CREATE')")
     public String helloSecured() {
         return "Hello Secured";
     }
@@ -44,7 +47,12 @@ public class PrincipalController {
 
         Set<RoleEntity> roles = userRequest.getRoles().stream()
                 .map(role -> RoleEntity.builder()
-                        .name(RoleEnum.valueOf(role)).build())
+                        .name(RoleEnum.valueOf(role.getRole().name()))
+                        .permissions(role.getPermissions().stream()
+                                .map(permission -> PermissionEntity.builder()
+                                        .name(PermissionsEnum.valueOf(permission.getPermission().name())).build()
+                                ).collect(Collectors.toSet()))
+                        .build())
                 .collect(Collectors.toSet());
 
         UserEntity userEntity = UserEntity.builder()
