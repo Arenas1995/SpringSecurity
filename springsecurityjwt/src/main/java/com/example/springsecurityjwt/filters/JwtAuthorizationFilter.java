@@ -31,12 +31,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtilities jwtUtilities;
 
-    private final UserDetailsService userDetailsService;
+    //private final UserDetailsService userDetailsService;
 
-    public JwtAuthorizationFilter(JwtUtils jwtUtils, JwtUtilities jwtUtilities, UserDetailsService userDetailsService) {
+    public JwtAuthorizationFilter(JwtUtils jwtUtils, JwtUtilities jwtUtilities) {
         this.jwtUtils = jwtUtils;
         this.jwtUtilities = jwtUtilities;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override

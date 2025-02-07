@@ -2,6 +2,7 @@ package com.example.springsecurityjwt.controllers;
 
 import com.example.springsecurityjwt.enums.PermissionsEnum;
 import com.example.springsecurityjwt.enums.RoleEnum;
+import com.example.springsecurityjwt.exceptions.SecurityErrorHandler;
 import com.example.springsecurityjwt.models.PermissionEntity;
 import com.example.springsecurityjwt.models.RoleEntity;
 import com.example.springsecurityjwt.models.UserEntity;
@@ -10,6 +11,7 @@ import com.example.springsecurityjwt.requests.UserRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.method.HandleAuthorizationDenied;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
+@HandleAuthorizationDenied(handlerClass = SecurityErrorHandler.class)
 public class PrincipalController {
 
     private final UserRepository userRepository;
